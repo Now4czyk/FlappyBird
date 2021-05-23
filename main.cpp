@@ -48,14 +48,6 @@ int main()
     bird.setOrigin(bird.getGlobalBounds().width/2,bird.getGlobalBounds().height/2);
     bird.setScale(0.15,0.15);
     shapes.emplace_back(&bird);
-    //2nd bird
-    Bird bird2;
-    bird2.setTexture(tex_bird);
-    bird2.setPosition(0, 100);
-    bird2.setTextureRect(sf::IntRect(90,138,320,225));
-    bird2.setOrigin(bird2.getGlobalBounds().width/2,bird2.getGlobalBounds().height/2);
-    bird2.setScale(0.15,0.15);
-    shapes.emplace_back(&bird2);
 
     //creating components for pipes
     sf::Texture tex_pipe;
@@ -103,10 +95,11 @@ int main()
     sf::Clock clock;
     sf::RenderWindow window(sf::VideoMode(1700, 600), "Flappy_bird");
     Menu menu(window.getSize().x, window.getSize().y);
-    bool is_jump = false, is_jump2,first = true, expl = true, text_activate = false, is_first = true;
+    bool is_jump = false, first = true, expl = true, text_activate = false, is_first = true;
     int counter = 0;
     double size_scale = 0.2;
     float jump_value = -0.25, gravitation_value = 0.0008, vel_rotate = 20;
+    srand(time(NULL));
 
     while (window.isOpen())
     {
@@ -125,11 +118,6 @@ int main()
                 if (event.key.code == sf::Keyboard::Space)
                 {
                     is_jump = true;
-                    wing.play();
-                }
-                if (event.key.code == sf::Keyboard::RShift)
-                {
-                    is_jump2 = true;
                     wing.play();
                 }
                 if(event.key.code == sf::Keyboard::Up)
@@ -160,27 +148,18 @@ int main()
         {
             //moving bird
             bird.move(bird.velx(), bird.vely());
-            bird2.move(bird2.velx(), bird2.vely());
-
 
             //no explosion
-            if(bird.boom() == false && bird2.boom() == false)
+            if(bird.boom() == false)
             {
                 view.setCenter(sf::Vector2f(bird.getGlobalBounds().left, window.getSize().y/2));
                 bird.velocity_x(100  * elapsed.asSeconds());
-                bird2.velocity_x(100  * elapsed.asSeconds());
                 gravitation(bird, elapsed, gravitation_value);
-                gravitation(bird2, elapsed, gravitation_value);
 
                 if(is_jump)
                 {
                     bird.velocity_y(jump_value);
                     is_jump = false;
-                }
-                if(is_jump2)
-                {
-                    bird2.velocity_y(jump_value);
-                    is_jump2 = false;
                 }
 
                 //rotating a bird
@@ -193,38 +172,22 @@ int main()
                 }else{
                     bird.setRotation(0);
                 }
-                if(bird2.vely() < 0)
-                {
-                    bird2.setRotation(-7);
-                }else if(bird2.vely() > 0)
-                {
-                    bird2.setRotation(7);
-                }else{
-                    bird2.setRotation(0);
-                }
 
                 //collisions && turning on point sound
                 for(int i = 0; i < pipeSpritevec.size(); i++)
                 {
                     collision_pipe(bird, pipeSpritevec[i]);
-                    collision_pipe(bird2, pipeSpritevec[i]);
                     if(bird.getGlobalBounds().left > pipeSpritevec[i].getGlobalBounds().left && bird.getGlobalBounds().left < pipeSpritevec[i].getGlobalBounds().left + pipeSpritevec[i].getGlobalBounds().width)
                     {
                         point.play();
                     }
                 }
                 collision_wall(bird, window.getSize().y-50);
-                collision_wall(bird2, window.getSize().y-50);
             }
 
             //explosion
-            if(bird.boom() == true || bird2.boom() == true)
+            if(bird.boom() == true)
             {
-                bird.velocity_y(0);
-                bird2.velocity_y(0);
-                bird.velocity_x(0);
-                bird2.velocity_x(0);
-
                 if(expl)
                 {
                     if(first)
@@ -237,11 +200,6 @@ int main()
                     {
                         bird.rotate(vel_rotate*elapsed.asSeconds());
                         bird.setScale(size_scale, size_scale);
-                    }
-                    if(bird2.boom() == true)
-                    {
-                        bird2.rotate(vel_rotate*elapsed.asSeconds());
-                        bird2.setScale(size_scale, size_scale);
                     }
                     vel_rotate+=0.3;
                     size_scale+=0.0001;
