@@ -1,6 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+
+//The class allows us to implement a menu at the beginning of the game.
+//Here we can choose how difficult our game should be
 
 class Menu {
 private:

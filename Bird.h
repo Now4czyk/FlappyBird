@@ -2,6 +2,11 @@
 
 #include <SFML/Graphics.hpp>
 
+//The class creates a bird that is the mian object in our game
+//Here we can change: vertical and horizontal velocity of the bird,
+//set whether there is an explosion(game over) and read the information
+
+
 class Bird : public sf::Sprite{
 private:
     float vel_y_ = 0, vel_x_ = 0;

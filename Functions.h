@@ -5,6 +5,7 @@
 #include "Bird.h"
 #include "Menu.h"
 
+//The function creates gravitation for the main object
 void gravitation(Bird(&bird), sf::Time elapsed, float gravitation_value)
 {
    // float acceleration = 0.5/elapsed.asMicroseconds();
@@ -16,6 +17,8 @@ void gravitation(Bird(&bird), sf::Time elapsed, float gravitation_value)
     bird.velocity_y(velY);
 }
 
+//The function checks whether there is a collision
+//between a bird and a pipe
 void collision_pipe(Bird &bird, sf::Sprite pipe)
 {
     if(pipe.getGlobalBounds().intersects(bird.getGlobalBounds()))
@@ -25,6 +28,8 @@ void collision_pipe(Bird &bird, sf::Sprite pipe)
     }
 }
 
+//The function checks whether there is a collision
+//between a bird and a wall(top and bottom)
 void collision_wall(Bird &bird, float window)
 {
     if(bird.getGlobalBounds().top <= 0 || bird.getGlobalBounds().top + bird.getGlobalBounds().height > window)
@@ -34,6 +39,7 @@ void collision_wall(Bird &bird, float window)
     }
 }
 
+//The function generates upper parts of pipes
 void generate_pipeU(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float pipe_x, float pipe_y)
 {
     sf::Sprite pipe;
@@ -45,6 +51,7 @@ void generate_pipeU(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float
     pipes.emplace_back(pipe);
 }
 
+//The function generates lower parts of pipes
 void generate_pipeD(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float pipe_x, float pipe_y, float lvl)
 {
     sf::Sprite pipe4;
@@ -55,6 +62,9 @@ void generate_pipeD(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float
     pipes.emplace_back(pipe4);
 }
 
+//The function gets information which level was chosen
+//and depending on it creates smaller or bigger distance
+//between an upper and a lower part of pipe
 void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipeSpritevec, sf::Texture &tex_pipe, bool &is_first)
 {
     float coord_x = 0;
@@ -63,7 +73,7 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
     case 0:
         std::cout << "=================================================" << std::endl;
         std::cout << "CHOOSEN LEVEL: EASY" << std::endl;
-        for(int i = 0; i < 0; i++)
+        for(int i = 0; i < 50; i++)
         {
             float coord_y = rand() % 300 - 150;
             generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y);
@@ -99,6 +109,8 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
     }
 }
 
+//The function displays a closing animation
+//and counts the number of points
 void ending(std::vector<std::unique_ptr<sf::Drawable>> &shapes, sf::Sprite &spark, bool &text_activate, bool &expl, sf::Sound &explosion, sf::Text &text, sf::Text &text_points, int &counter, Bird &bird, sf::RenderWindow &window, sf::Font &font)
 {
     text_activate = true;
