@@ -63,7 +63,7 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
     case 0:
         std::cout << "=================================================" << std::endl;
         std::cout << "CHOOSEN LEVEL: EASY" << std::endl;
-        for(int i = 0; i < 50; i++)
+        for(int i = 0; i < 0; i++)
         {
             float coord_y = rand() % 300 - 150;
             generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y);
