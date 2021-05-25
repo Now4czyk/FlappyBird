@@ -4,6 +4,7 @@
 #include <SFML/Audio.hpp>
 #include "Bird.h"
 #include "Menu.h"
+#include "Skins.h"
 
 //The function creates gravitation for the main object
 void gravitation(Bird(&bird), sf::Time elapsed, float gravitation_value)
@@ -65,14 +66,14 @@ void generate_pipeD(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float
 //The function gets information which level was chosen
 //and depending on it creates smaller or bigger distance
 //between an upper and a lower part of pipe
-void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipeSpritevec, sf::Texture &tex_pipe, bool &is_first)
+void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipeSpritevec, sf::Texture &tex_pipe, bool &is_menu)
 {
     float coord_x = 0;
     switch (menu.getPressed()) {
 
     case 0:
         std::cout << "=================================================" << std::endl;
-        std::cout << "CHOOSEN LEVEL: EASY" << std::endl;
+        std::cout << "SELECTED LEVEL: EASY" << std::endl;
         for(int i = 0; i < 50; i++)
         {
             float coord_y = rand() % 300 - 150;
@@ -80,11 +81,11 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
             generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, 150);
             coord_x += 230;
         }
-        is_first = 0;
+        is_menu = 0;
         break;
     case 1:
         std::cout << "=================================================" << std::endl;
-        std::cout << "CHOOSEN LEVEL: MEDIUM" << std::endl;
+        std::cout << "SELECTED LEVEL: MEDIUM" << std::endl;
         for(int i = 0; i < 50; i++)
         {
             float coord_y = rand() % 300 - 150;
@@ -92,11 +93,11 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
             generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, 135);
             coord_x += 230;
         }
-        is_first = 0;
+        is_menu = 0;
         break;
     case 2:
         std::cout << "=================================================" << std::endl;
-        std::cout << "CHOOSEN LEVEL: HARD" << std::endl;
+        std::cout << "SELECTED LEVEL: HARD" << std::endl;
         for(int i = 0; i < 50; i++)
         {
             float coord_y = rand() % 300 - 150;
@@ -104,10 +105,45 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
             generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, 120);
             coord_x += 230;
         }
-        is_first = 0;
+        is_menu = 0;
         break;
     }
 }
+
+//The function gets information which color of bird was chosen
+//and depending on it creates a bird in this color
+void choosing_skin(Skins &skins,Bird &bird, sf::RenderTarget &window, std::vector<std::unique_ptr<sf::Drawable>> &shapes, bool &is_skins, sf::Texture &yellow_bird, sf::Texture &blue_bird, sf::Texture &red_bird)
+{
+    sf::Texture tex_bird;
+
+    switch (skins.getPressed()) {
+    case 1:
+        std::cout << "=================================================" << std::endl;
+        std::cout << "SELECTED COLOR: YELLOW" << std::endl;
+        bird.setTexture(yellow_bird);
+        is_skins = 0;
+        break;
+    case 2:
+        std::cout << "=================================================" << std::endl;
+        std::cout << "SELECTED COLOR: BLUE" << std::endl;
+        bird.setTexture(blue_bird);
+        is_skins = 0;
+        break;
+    case 3:
+        std::cout << "=================================================" << std::endl;
+        std::cout << "SELECTED COLOR: RED" << std::endl;
+        bird.setTexture(red_bird);
+        is_skins = 0;
+        break;
+    }
+
+    bird.setPosition(0, 100);
+    bird.setTextureRect(sf::IntRect(90,138,320,225));
+    bird.setOrigin(bird.getGlobalBounds().width/2,bird.getGlobalBounds().height/2);
+    bird.setScale(0.15,0.15);
+    shapes.emplace_back(&bird);
+}
+
 
 //The function displays a closing animation
 //and counts the number of points
