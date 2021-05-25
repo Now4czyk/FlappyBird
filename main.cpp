@@ -5,6 +5,7 @@
 #include "Menu.h"
 #include "Bird.h"
 #include "Functions.h"
+#include "Skins.h"
 
 int main()
 {
@@ -40,14 +41,13 @@ int main()
 
     //creating a bird
     Bird bird;
-    sf::Texture tex_bird;
-    tex_bird.loadFromFile("bird.png");
-    bird.setTexture(tex_bird);
-    bird.setPosition(0, 100);
-    bird.setTextureRect(sf::IntRect(90,138,320,225));
-    bird.setOrigin(bird.getGlobalBounds().width/2,bird.getGlobalBounds().height/2);
-    bird.setScale(0.15,0.15);
-    shapes.emplace_back(&bird);
+    sf::Texture yellow_bird;
+    yellow_bird.loadFromFile("yellow_bird.png");
+    sf::Texture blue_bird;
+    blue_bird.loadFromFile("blue_bird.png");
+    sf::Texture red_bird;
+    red_bird.loadFromFile("red_bird.png");
+
 
     //creating components for pipes
     sf::Texture tex_pipe;
@@ -94,8 +94,9 @@ int main()
     //settings
     sf::Clock clock;
     sf::RenderWindow window(sf::VideoMode(1700, 600), "Flappy_bird");
-    Menu menu(window.getSize().x, window.getSize().y);
-    bool is_jump = false, first = true, expl = true, text_activate = false, is_first = true;
+    Menu menu(window);
+    Skins skins(window);
+    bool is_jump = false, first = true, expl = true, text_activate = false, is_menu = true, is_skins = true;
     int counter = 0;
     double size_scale = 0.2;
     float jump_value = -0.25, gravitation_value = 0.0008, vel_rotate = 20;
@@ -120,17 +121,35 @@ int main()
                     is_jump = true;
                     wing.play();
                 }
-                if(event.key.code == sf::Keyboard::Up)
+                if(is_skins && is_menu == false)
                 {
-                    menu.MoveUp();
+                    if(event.key.code == sf::Keyboard::Up)
+                    {
+                        skins.MoveUp();
+                    }
+                    if(event.key.code == sf::Keyboard::Down)
+                    {
+                        skins.MoveDown();
+                    }
+                    if(event.key.code == sf::Keyboard::Return)
+                    {
+                        choosing_skin(skins, bird, window, shapes, is_skins, yellow_bird, blue_bird, red_bird);
+                    }
                 }
-                if(event.key.code == sf::Keyboard::Down)
+                if(is_menu)
                 {
-                    menu.MoveDown();
-                }
-                if(event.key.code == sf::Keyboard::Return)
-                {
-                    choosing_lvl_and_generating_pipes(menu, pipeSpritevec, tex_pipe, is_first);
+                    if(event.key.code == sf::Keyboard::Up)
+                    {
+                        menu.MoveUp();
+                    }
+                    if(event.key.code == sf::Keyboard::Down)
+                    {
+                        menu.MoveDown();
+                    }
+                    if(event.key.code == sf::Keyboard::Return)
+                    {
+                        choosing_lvl_and_generating_pipes(menu, pipeSpritevec, tex_pipe, is_menu);
+                    }
                 }
             }
         }
@@ -139,9 +158,14 @@ int main()
         window.clear(sf::Color::Black);
 
         //menu
-        if(is_first)
+        if(is_menu)
         {
             menu.draw(window);
+        }
+        //skins
+        else if(is_skins && is_menu == false)
+        {
+            skins.draw(window);
         }
         //game
         else
@@ -152,10 +176,14 @@ int main()
             //no explosion
             if(bird.boom() == false)
             {
+                //setting the center of camera
                 view.setCenter(sf::Vector2f(bird.getGlobalBounds().left, window.getSize().y/2));
+                //setting horizontal velocity of the bird
                 bird.velocity_x(100  * elapsed.asSeconds());
+                //turning on gravitation
                 gravitation(bird, elapsed, gravitation_value);
 
+                //jump
                 if(is_jump)
                 {
                     bird.velocity_y(jump_value);
