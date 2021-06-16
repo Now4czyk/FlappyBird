@@ -6,6 +6,7 @@
 #include "Bird.h"
 #include "Functions.h"
 #include "Skins.h"
+#include "CalibrationFile.h"
 
 int main()
 {
@@ -99,8 +100,10 @@ int main()
     bool is_jump = false, first = true, expl = true, text_activate = false, is_menu = true, is_skins = true;
     int counter = 0;
     double size_scale = 0.2;
-    float jump_value = -0.25, gravitation_value = 0.0008, vel_rotate = 20;
+    float jump_value = -0.25, gravitation_value = 0.0008, vel_rotate = 20, dist, easy, medium, hard;
     srand(time(NULL));
+
+    calibration(easy, medium, hard, dist);
 
     while (window.isOpen())
     {
@@ -148,7 +151,7 @@ int main()
                     }
                     if(event.key.code == sf::Keyboard::Return)
                     {
-                        choosing_lvl_and_generating_pipes(menu, pipeSpritevec, tex_pipe, is_menu);
+                        choosing_lvl_and_generating_pipes(menu, pipeSpritevec, tex_pipe, is_menu, easy, medium, hard, dist);
                     }
                 }
             }
@@ -234,7 +237,7 @@ int main()
                 }
                 if(expl && bombrelease.getStatus() == !(sf::SoundSource::Playing))
                 {
-                    ending(shapes, spark, text_activate, expl, explosion, text, text_points, counter, bird, window, font);
+                    ending(shapes, spark, text_activate, expl, explosion, text, text_points, counter, bird, window, font, dist);
                 }
             }
 
