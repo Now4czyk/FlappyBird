@@ -41,11 +41,11 @@ void collision_wall(Bird &bird, float window)
 }
 
 //The function generates upper parts of pipes
-void generate_pipeU(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float pipe_x, float pipe_y)
+void generate_pipeU(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float pipe_x, float pipe_y, float lvl)
 {
     sf::Sprite pipe;
     pipe.setTexture(tex_pipe);
-    pipe.setPosition(300+pipe_x, 200+pipe_y);
+    pipe.setPosition(lvl+pipe_x, 200+pipe_y);
     pipe.setTextureRect(sf::IntRect(0,0,344,4000));
     pipe.setScale(0.15,0.15);
     pipe.setRotation(180);
@@ -57,7 +57,7 @@ void generate_pipeD(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float
 {
     sf::Sprite pipe4;
     pipe4.setTexture(tex_pipe);
-    pipe4.setPosition(248.4+pipe_x, 200+lvl+pipe_y);
+    pipe4.setPosition(lvl-51.6+pipe_x, 200+lvl+pipe_y);
     pipe4.setTextureRect(sf::IntRect(0,0,344,4000));
     pipe4.setScale(0.15,0.15);
     pipes.emplace_back(pipe4);
@@ -66,9 +66,9 @@ void generate_pipeD(std::vector<sf::Sprite> &pipes, sf::Texture &tex_pipe, float
 //The function gets information which level was chosen
 //and depending on it creates smaller or bigger distance
 //between an upper and a lower part of pipe
-void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipeSpritevec, sf::Texture &tex_pipe, bool &is_menu)
+void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipeSpritevec, sf::Texture &tex_pipe, bool &is_menu, const float &easy, const float &medium, const float &hard, const float &dist)
 {
-    float coord_x = 0;
+    float coord_x = 0, coord_y;
     switch (menu.getPressed()) {
 
     case 0:
@@ -76,10 +76,13 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
         std::cout << "SELECTED LEVEL: EASY" << std::endl;
         for(int i = 0; i < 50; i++)
         {
-            float coord_y = rand() % 300 - 150;
-            generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y);
-            generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, 150);
-            coord_x += 230;
+            do
+            {
+                coord_y = rand() % 300 - 150;
+            }while(coord_y+easy+200>550 || coord_y+easy+200 < 0);
+            generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y, easy);
+            generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, easy);
+            coord_x += dist;
         }
         is_menu = 0;
         break;
@@ -88,10 +91,13 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
         std::cout << "SELECTED LEVEL: MEDIUM" << std::endl;
         for(int i = 0; i < 50; i++)
         {
-            float coord_y = rand() % 300 - 150;
-            generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y);
-            generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, 135);
-            coord_x += 230;
+            do
+            {
+                coord_y = rand() % 300 - 150;
+            }while(coord_y+easy+200>550 || coord_y+easy+200 < 0);
+            generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y, medium);
+            generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, medium);
+            coord_x += dist;
         }
         is_menu = 0;
         break;
@@ -100,10 +106,13 @@ void choosing_lvl_and_generating_pipes(Menu &menu, std::vector<sf::Sprite> &pipe
         std::cout << "SELECTED LEVEL: HARD" << std::endl;
         for(int i = 0; i < 50; i++)
         {
-            float coord_y = rand() % 300 - 150;
-            generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y);
-            generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, 120);
-            coord_x += 230;
+            do
+            {
+                coord_y = rand() % 300 - 150;
+            }while(coord_y+easy+200>550 || coord_y+easy+200 < 0);
+            generate_pipeU(pipeSpritevec, tex_pipe, coord_x, coord_y, hard);
+            generate_pipeD(pipeSpritevec, tex_pipe, coord_x, coord_y, hard);
+            coord_x += dist;
         }
         is_menu = 0;
         break;
@@ -137,7 +146,7 @@ void choosing_skin(Skins &skins,Bird &bird, sf::RenderTarget &window, std::vecto
         break;
     }
 
-    bird.setPosition(0, 100);
+    bird.setPosition(-250, 100);
     bird.setTextureRect(sf::IntRect(90,138,320,225));
     bird.setOrigin(bird.getGlobalBounds().width/2,bird.getGlobalBounds().height/2);
     bird.setScale(0.15,0.15);
@@ -147,14 +156,14 @@ void choosing_skin(Skins &skins,Bird &bird, sf::RenderTarget &window, std::vecto
 
 //The function displays a closing animation
 //and counts the number of points
-void ending(std::vector<std::unique_ptr<sf::Drawable>> &shapes, sf::Sprite &spark, bool &text_activate, bool &expl, sf::Sound &explosion, sf::Text &text, sf::Text &text_points, int &counter, Bird &bird, sf::RenderWindow &window, sf::Font &font)
+void ending(std::vector<std::unique_ptr<sf::Drawable>> &shapes, sf::Sprite &spark, bool &text_activate, bool &expl, sf::Sound &explosion, sf::Text &text, sf::Text &text_points, int &counter, Bird &bird, sf::RenderWindow &window, sf::Font &font, float dist)
 {
     text_activate = true;
     explosion.play();
     expl = false;
     spark.setPosition(bird.getGlobalBounds().left-500, bird.getGlobalBounds().top-500);
     shapes.emplace_back(&spark);
-    counter = ((int)bird.getGlobalBounds().left-100) / 200;
+    counter = (bird.getGlobalBounds().left + bird.getGlobalBounds().width) / dist;
 
     //setting texts
     text.setString("GAME OVER");
