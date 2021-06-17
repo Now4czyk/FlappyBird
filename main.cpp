@@ -42,6 +42,7 @@ int main()
 
     //creating a bird
     Bird bird;
+    Bird bird2;
     sf::Texture yellow_bird;
     yellow_bird.loadFromFile("yellow_bird.png");
     sf::Texture blue_bird;
@@ -85,6 +86,7 @@ int main()
     //creating font and texts
     sf::Text text;
     sf::Text text_points;
+    sf::Text text_points2;
     sf::Font font;
     font.loadFromFile("font.ttf");
 
@@ -96,14 +98,17 @@ int main()
     sf::Clock clock;
     sf::RenderWindow window(sf::VideoMode(1700, 600), "Flappy_bird");
     Menu menu(window);
-    Skins skins(window);
-    bool is_jump = false, first = true, expl = true, text_activate = false, is_menu = true, is_skins = true;
-    int counter = 0;
+    Skins skins(window);   
+    int number = 0;
     double size_scale = 0.2;
     float jump_value = -0.25, gravitation_value = 0.0008, vel_rotate = 20, dist, easy, medium, hard;
+    bool is_jump = false, is_jump2 = false, first = true, expl = true, text_activate = false, is_menu = true, is_skins = true;
     srand(time(NULL));
 
-    calibration(easy, medium, hard, dist);
+    //coins
+    std::vector<sf::CircleShape> coins;
+    calibration(easy, medium, hard, dist, number);
+    generate_coins(dist, coins);
 
     while (window.isOpen())
     {
@@ -124,6 +129,11 @@ int main()
                     is_jump = true;
                     wing.play();
                 }
+                if (event.key.code == sf::Keyboard::LShift)
+                {
+                    is_jump2 = true;
+                    wing.play();
+                }
                 if(is_skins && is_menu == false)
                 {
                     if(event.key.code == sf::Keyboard::Up)
@@ -136,7 +146,7 @@ int main()
                     }
                     if(event.key.code == sf::Keyboard::Return)
                     {
-                        choosing_skin(skins, bird, window, shapes, is_skins, yellow_bird, blue_bird, red_bird);
+                        choosing_skin(skins, bird, bird2, number, shapes, is_skins, yellow_bird, blue_bird, red_bird);
                     }
                 }
                 if(is_menu)
@@ -175,22 +185,34 @@ int main()
         {
             //moving bird
             bird.move(bird.velx(), bird.vely());
+            collision_coin(coins, bird, bird2);
+            if(number == 2)
+            {
+                bird2.move(bird2.velx(), bird2.vely());
+            }
 
             //no explosion
-            if(bird.boom() == false)
+            if(bird.boom() == false && bird2.boom() == false)
             {
                 //setting the center of camera
                 view.setCenter(sf::Vector2f(bird.getGlobalBounds().left, window.getSize().y/2));
                 //setting horizontal velocity of the bird
                 bird.velocity_x(100  * elapsed.asSeconds());
+                bird2.velocity_x(100  * elapsed.asSeconds());
                 //turning on gravitation
-                gravitation(bird, elapsed, gravitation_value);
+                gravitation(bird, gravitation_value);
+                gravitation(bird2, gravitation_value);
 
                 //jump
                 if(is_jump)
                 {
                     bird.velocity_y(jump_value);
                     is_jump = false;
+                }
+                if(is_jump2 && number == 2)
+                {
+                    bird2.velocity_y(jump_value);
+                    is_jump2 = false;
                 }
 
                 //rotating a bird
@@ -204,21 +226,41 @@ int main()
                     bird.setRotation(0);
                 }
 
+                if(bird2.vely() < 0 && number == 2)
+                {
+                    bird2.setRotation(-7);
+                }else if(bird2.vely() > 0)
+                {
+                    bird2.setRotation(7);
+                }else{
+                    bird2.setRotation(0);
+                }
+
                 //collisions && turning on point sound
                 for(int i = 0; i < pipeSpritevec.size(); i++)
                 {
                     collision_pipe(bird, pipeSpritevec[i]);
+                    if(number == 2)
+                    {
+                        collision_pipe(bird2, pipeSpritevec[i]);
+                    }
                     if(bird.getGlobalBounds().left > pipeSpritevec[i].getGlobalBounds().left && bird.getGlobalBounds().left < pipeSpritevec[i].getGlobalBounds().left + pipeSpritevec[i].getGlobalBounds().width)
                     {
                         point.play();
                     }
                 }
                 collision_wall(bird, window.getSize().y-50);
+                if(number == 2)
+                {
+                    collision_wall(bird2, window.getSize().y-50);
+                }
             }
 
             //explosion
-            if(bird.boom() == true)
+            if(bird.boom() == true || bird2.boom() == true)
             {
+                bird.velocity(0, 0);
+                bird2.velocity(0, 0);
                 if(expl)
                 {
                     if(first)
@@ -232,12 +274,17 @@ int main()
                         bird.rotate(vel_rotate*elapsed.asSeconds());
                         bird.setScale(size_scale, size_scale);
                     }
+                    if(bird2.boom() == true)
+                    {
+                        bird2.rotate(vel_rotate*elapsed.asSeconds());
+                        bird2.setScale(size_scale, size_scale);
+                    }
                     vel_rotate+=0.3;
                     size_scale+=0.0001;
                 }
                 if(expl && bombrelease.getStatus() == !(sf::SoundSource::Playing))
                 {
-                    ending(shapes, spark, text_activate, expl, explosion, text, text_points, counter, bird, window, font, dist);
+                    ending(number, shapes, spark, text_activate, expl, explosion, text, text_points, text_points2, bird, bird2, window, font, dist);
                 }
             }
 
@@ -253,11 +300,22 @@ int main()
                 window.draw(object);
             }
 
+            //drawing coins
+            for(auto &object : coins)
+            {
+                window.draw(object);
+            }
+
             //drawing closing results
             if(text_activate)
             {
                 window.draw(text);
                 window.draw(text_points);
+                if(number == 2)
+                {
+
+                    window.draw(text_points2);
+                }
             }
 
             //setting a new view
