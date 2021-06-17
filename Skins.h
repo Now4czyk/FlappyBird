@@ -1,11 +1,12 @@
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
-
-
 #pragma once
 
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+
+//The class allows us to implement a skin menu at the beginning of the game.
+//Here we can choose the color of your bird
 
 class Skins {
 private:
@@ -23,7 +24,7 @@ private:
     sf::Sprite blue_bird;
 
 public:
-    Skins(sf::RenderTarget &window)
+    Skins(const sf::RenderTarget &window)
     {
         tex_backbround.loadFromFile("background.png");
         tex_backbround.setRepeated(true);
@@ -60,7 +61,8 @@ public:
             skins[i].setFont(font);
         }
         skins[0].setColor(sf::Color::Black);
-        skins[0].setString("CHOOSE COLOR:");
+        skins[0].setString("CHOOSE COLOR FOR PLAYER 1:");
+        skins[0].Bold;
         skins[0].setPosition(sf::Vector2f(window.getSize().x/4 - 100, window.getSize().y/(number_of_strings+1)*1));
 
         skins[1].setColor(sf::Color::Red);

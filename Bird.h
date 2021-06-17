@@ -11,8 +11,24 @@ class Bird : public sf::Sprite{
 private:
     float vel_y_ = 0, vel_x_ = 0;
     bool BOOM_ = false;
+    int points = 0;
 public:
     Bird(){}
+
+    void add_points()
+    {
+        points += 1;
+    }
+
+    void dock_points()
+    {
+        points -= 1;
+    }
+
+    int return_points()
+    {
+        return points;
+    }
 
     float velx()
     {
@@ -24,26 +40,26 @@ public:
         return vel_y_;
     }
 
-    void velocity(float velx,  float vely)
+    void velocity(const float &velx, const float &vely)
     {
         vel_x_ = velx;
         vel_y_ = vely;
     }
 
-    void velocity_y(float vely)
+    void velocity_y(const float &vely)
     {
         vel_y_ = vely;
     }
 
-    void velocity_x(float velx)
+    void velocity_x(const float &velx)
     {
         vel_x_ = velx;
     }
-    void set_BOOM(bool yes_or_no)
+    void set_BOOM(const bool &yes_or_no)
     {
         BOOM_ = yes_or_no;
     }
-    bool boom()
+    bool boom() const
     {
         return BOOM_;
     }

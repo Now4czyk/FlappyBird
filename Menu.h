@@ -15,7 +15,7 @@ private:
     sf::Texture tex_backbround;
     sf::Sprite background;
 public:
-    Menu(sf::RenderTarget &window)
+    Menu(const sf::RenderTarget &window)
     {
         tex_backbround.loadFromFile("background.png");
         tex_backbround.setRepeated(true);
