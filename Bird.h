@@ -25,6 +25,11 @@ public:
         points -= 1;
     }
 
+    void restart_points()
+    {
+        points = 0;
+    }
+
     int return_points()
     {
         return points;

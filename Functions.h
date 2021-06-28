@@ -10,7 +10,7 @@
 void gravitation(Bird &bird, const float &gravitation_value)
 {
     float velY = bird.vely();
-    if(velY < 0.8)
+    if(velY < 8)
     {
         velY += gravitation_value;
     }
@@ -243,7 +243,6 @@ void ending(const int &number, std::vector<std::unique_ptr<sf::Drawable>> &shape
 
         text_points2.setString(points12 + points22);
         text_points2.setPosition(bird.getGlobalBounds().left - 150 , 3*(window.getSize().y)/4);
-        std::cout << "I'M HERE!!!!!" <<  std::endl;
     }
     else
     {
