@@ -101,7 +101,7 @@ int main()
     Skins skins(window);   
     int number = 0;
     double size_scale = 0.2;
-    float jump_value = -0.25, gravitation_value = 0.0008, vel_rotate = 20, dist, easy, medium, hard;
+    float jump_value = -5.3, gravitation_value = 0.4, vel_rotate = 20, dist, easy, medium, hard;
     bool is_jump = false, is_jump2 = false, first = true, expl = true, text_activate = false, is_menu = true, is_skins = true;
     srand(time(NULL));
 
@@ -109,6 +109,8 @@ int main()
     std::vector<sf::CircleShape> coins;
     calibration(easy, medium, hard, dist, number);
     generate_coins(dist, coins);
+
+    window.setFramerateLimit(60);
 
     while (window.isOpen())
     {
@@ -237,7 +239,7 @@ int main()
                 }
 
                 //collisions && turning on point sound
-                for(int i = 0; i < pipeSpritevec.size(); i++)
+                for(unsigned int i = 0; i < pipeSpritevec.size(); i++)
                 {
                     collision_pipe(bird, pipeSpritevec[i]);
                     if(number == 2)
@@ -279,8 +281,8 @@ int main()
                         bird2.rotate(vel_rotate*elapsed.asSeconds());
                         bird2.setScale(size_scale, size_scale);
                     }
-                    vel_rotate+=0.3;
-                    size_scale+=0.0001;
+                    vel_rotate+=30;
+                    size_scale+=0.001;
                 }
                 if(expl && bombrelease.getStatus() == !(sf::SoundSource::Playing))
                 {
@@ -313,7 +315,6 @@ int main()
                 window.draw(text_points);
                 if(number == 2)
                 {
-
                     window.draw(text_points2);
                 }
             }
